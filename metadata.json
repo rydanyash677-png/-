@@ -1,0 +1,6 @@
+{
+  "name": "صيدلية ذو ريدان - DHU RAYDAN PHARMACY",
+  "description": "صيدلية ذو ريدان الإلكترونية - اليمن، إب، مفرق ميتم. تسوق الأدوية، الفيتامينات، والمستلزمات الطبية مع التوصيل السريع وخدمة الواتساب.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

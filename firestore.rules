@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'rydanyash677@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isPharmacist() {
+      return isAdmin() || (
+        isSignedIn() && exists(/databases/$(database)/documents/pharmacists/$(request.auth.uid))
+      );
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admins & Pharmacists role collections
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /pharmacists/{pharmacistId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if (isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Product catalog (publicly readable, admin/pharmacist manageable)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isPharmacist();
+    }
+
+    // Product categories (publicly readable, admin manageable)
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isPharmacist();
+    }
+
+    // Delivery areas and pricing (publicly readable, admin manageable)
+    match /deliveryAreas/{areaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Coupons
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Settings
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      // Customer can read their own order, or admin/pharmacist can read all
+      allow read: if isPharmacist() || (isSignedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if request.resource.data.totalAmount is number &&
+                       request.resource.data.totalAmount >= 0 &&
+                       request.resource.data.customerName is string &&
+                       request.resource.data.phone is string;
+      allow update: if isPharmacist() || (isSignedIn() && resource.data.customerId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // Prescriptions
+    match /prescriptions/{prescriptionId} {
+      allow read: if isPharmacist() || (isSignedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if request.resource.data.customerName is string &&
+                       request.resource.data.phone is string &&
+                       request.resource.data.imageUrl is string;
+      allow update: if isPharmacist();
+      allow delete: if isAdmin();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if isPharmacist() || (isSignedIn() && resource.data.recipientId == request.auth.uid);
+      allow write: if isPharmacist();
+    }
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role and contact information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "governorate": { "type": "string", "maxLength": 64 },
+        "address": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "enum": ["customer", "pharmacist", "admin"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "role", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Pharmaceutical and healthcare product in the catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "nameAr": { "type": "string", "maxLength": 128 },
+        "nameEn": { "type": "string", "maxLength": 128 },
+        "scientificName": { "type": "string", "maxLength": 128 },
+        "activeIngredient": { "type": "string", "maxLength": 128 },
+        "manufacturer": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 64 },
+        "packageSize": { "type": "string", "maxLength": 64 },
+        "strength": { "type": "string", "maxLength": 64 },
+        "price": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "description": { "type": "string", "maxLength": 1000 },
+        "indications": { "type": "string", "maxLength": 500 },
+        "dosage": { "type": "string", "maxLength": 500 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "requiresPrescription": { "type": "boolean" },
+        "isAvailable": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "isBestSeller": { "type": "boolean" },
+        "expiryDate": { "type": "string", "maxLength": 32 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "nameAr", "nameEn", "category", "price", "stock", "requiresPrescription", "isAvailable"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Pharmacy product category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "nameAr": { "type": "string", "maxLength": 64 },
+        "nameEn": { "type": "string", "maxLength": 64 },
+        "icon": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 256 },
+        "order": { "type": "number" }
+      },
+      "required": ["id", "nameAr", "nameEn"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order in Yemeni Rial",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "orderNumber": { "type": "string", "maxLength": 32 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "governorate": { "type": "string", "maxLength": 64 },
+        "district": { "type": "string", "maxLength": 64 },
+        "detailedAddress": { "type": "string", "maxLength": 256 },
+        "deliveryNotes": { "type": "string", "maxLength": 256 },
+        "subtotal": { "type": "number" },
+        "deliveryFee": { "type": "number" },
+        "discount": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "paymentMethod": { "type": "string", "enum": ["cash_on_delivery", "bank_transfer", "kuraimi_jawali"] },
+        "status": { "type": "string", "enum": ["طلب جديد", "قيد المراجعة", "تم تأكيد الطلب", "جارٍ تجهيز الطلب", "خرج للتوصيل", "تم التسليم", "تم الإلغاء"] },
+        "orderedViaWhatsApp": { "type": "boolean" },
+        "hasPrescriptionItems": { "type": "boolean" },
+        "prescriptionId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "customerName", "phone", "governorate", "subtotal", "totalAmount", "status"]
+    },
+    "Prescription": {
+      "title": "Prescription",
+      "description": "Medical prescription uploaded by customer for pharmacist review",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "patientAge": { "type": "string", "maxLength": 32 },
+        "imageUrl": { "type": "string", "maxLength": 500000 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["جديد", "قيد التدقيق", "تمت الموافقة", "مرفوضة", "تم التجهيز"] },
+        "pharmacistNotes": { "type": "string", "maxLength": 1000 },
+        "reviewedBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "customerName", "phone", "imageUrl", "status", "createdAt"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Promotional discount voucher",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "maxLength": 32 },
+        "discountPercentage": { "type": "number" },
+        "minOrder": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["code", "discountPercentage", "isActive"]
+    },
+    "DeliveryArea": {
+      "title": "DeliveryArea",
+      "description": "Delivery pricing and timing for Yemeni regions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "governorate": { "type": "string", "maxLength": 64 },
+        "areaName": { "type": "string", "maxLength": 64 },
+        "fee": { "type": "number" },
+        "estimatedHours": { "type": "string", "maxLength": 64 },
+        "isFreeAvailable": { "type": "boolean" },
+        "minFreeAmount": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "governorate", "areaName", "fee", "isActive"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Pharmacy application general settings",
+      "type": "object",
+      "properties": {
+        "pharmacyNameAr": { "type": "string", "maxLength": 128 },
+        "pharmacyNameEn": { "type": "string", "maxLength": 128 },
+        "location": { "type": "string", "maxLength": 256 },
+        "whatsApp": { "type": "string", "maxLength": 32 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "slogan": { "type": "string", "maxLength": 128 },
+        "isOpen": { "type": "boolean" },
+        "emergencyNotice": { "type": "string", "maxLength": 256 }
+      },
+      "required": ["pharmacyNameAr", "whatsApp"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Alert notification for customer or admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "recipientId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 128 },
+        "message": { "type": "string", "maxLength": 512 },
+        "type": { "type": "string", "enum": ["order", "prescription", "offer", "system"] },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "recipientId", "title", "message", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and contact info"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Pharmaceutical medicines and health products"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Product categories"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Pharmacy customer orders"
+    },
+    "/prescriptions/{prescriptionId}": {
+      "schema": "Prescription",
+      "description": "Customer uploaded medical prescriptions"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Discount voucher codes"
+    },
+    "/deliveryAreas/{deliveryAreaId}": {
+      "schema": "DeliveryArea",
+      "description": "Delivery locations and tariffs"
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "System settings and pharmacy metadata"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "System and order alerts"
+    }
+  }
+}
